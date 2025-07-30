@@ -1,0 +1,55 @@
+# --- Node ---
+node_modules/
+.pnpm/
+
+# --- Build output ---
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- System ---
+.DS_Store
+Thumbs.db
+
+# --- Env files ---
+.env*
+!.env.example
+
+# --- TypeScript ---
+*.tsbuildinfo
+
+# --- VSCode ---
+.vscode/
+.history/
+
+# --- IDEs ---
+.idea/
+*.iml
+
+# --- OS metadata ---
+*.swp
+*.swo
+*.bak
+*~
+
+# --- Testing ---
+coverage/
+.nyc_output/
+jest.config.js
+
+# --- Misc ---
+*.local
+.cache/
+temp/
+tmp/
+
+# --- Monorepo tooling ---
+.pnpm-debug.log
+.eslintcache
+.husky/_/
+yarn.lock
+package-lock.json
