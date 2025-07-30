@@ -1,0 +1,27 @@
+{
+  "name": "poke-arena",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "LuckyFoxCode",
+  "packageManager": "pnpm@10.7.0",
+  "scripts": {
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backend": "pnpm --filter backend build",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^16.1.2"
+  },
+  "lint-staged": {
+    "frontend/**/*.{js,ts,vue}": [
+      "pnpm --filter frontend run lint"
+    ],
+    "frontend/**/*.{js,ts,vue,json,css,md}": [
+      "pnpm --filter frontend exec prettier --write"
+    ]
+  }
+}
