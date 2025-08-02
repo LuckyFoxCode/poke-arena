@@ -1,7 +1,33 @@
 <script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue';
 import { IconClose } from '@/assets/icons';
+import type { User } from '@/types/user';
 import AuthSignUp from './AuthSignUp.vue';
 import AuthTabs from './AuthTabs.vue';
+
+const users = reactive<User[]>([]);
+const toastMessage = ref<string>(' User added successfully!');
+const toastType = ref<'success' | 'error'>('success');
+const showToast = ref<boolean>(false);
+
+const triggerToast = ({ type, message }: { type: 'success' | 'error'; message: string }) => {
+  toastType.value = type;
+  toastMessage.value = message;
+  showToast.value = true;
+
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
+
+onMounted(() => {
+  users.push(...JSON.parse(localStorage.getItem('users') || '[]'));
+});
+
+const addUser = (user: User) => {
+  users.push(user);
+  localStorage.setItem('users', JSON.stringify(users));
+};
 </script>
 
 <template>
@@ -19,7 +45,10 @@ import AuthTabs from './AuthTabs.vue';
       </button>
 
       <AuthTabs />
-      <AuthSignUp />
+      <AuthSignUp
+        @add-user="addUser"
+        @trigger-toast="triggerToast"
+      />
 
       <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
         <div class="h-px flex-1 bg-slate-300 dark:bg-slate-600"></div>
@@ -36,5 +65,28 @@ import AuthTabs from './AuthTabs.vue';
         By creating an account, you agree to our Terms & Services
       </p>
     </div>
+    <transition name="toast-fade">
+      <div
+        v-if="showToast"
+        class="fixed right-4 bottom-4 z-50 rounded-md px-4 py-2 text-white shadow-lg"
+        :class="toastType === 'success' ? 'bg-green-400' : 'bg-rose-500'"
+      >
+        {{ toastMessage }}
+      </div>
+    </transition>
   </div>
 </template>
+
+<style scoped>
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition:
+    opacity 0.5s,
+    transform 0.5s;
+}
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+</style>

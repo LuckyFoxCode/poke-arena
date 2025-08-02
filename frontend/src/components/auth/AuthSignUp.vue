@@ -6,6 +6,9 @@ import { IconEmail, IconPassword, IconUser } from '@/assets/icons';
 import { registerSchema } from '@/schemas/registerSchema';
 import AuthInput from './AuthInput.vue';
 import AuthButton from './AuthButton.vue';
+import type { User } from '@/types/user';
+
+const emit = defineEmits(['add-user', 'trigger-toast']);
 
 type InputName = 'username' | 'email' | 'password';
 
@@ -60,8 +63,33 @@ const isFormReady = computed(() => {
 });
 
 const onSubmit = handleSubmit((values) => {
-  console.log(values);
-  console.log('Submit');
+  const newUser: User = {
+    ...values,
+    id: crypto.randomUUID(),
+    createAt: new Date().toISOString(),
+    role: 'user',
+    authProvider: 'local',
+  };
+
+  const existingUsers: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+
+  const isUserExists = existingUsers.some(
+    (user) => user.email.toLowerCase() === newUser.email.toLowerCase(),
+  );
+
+  if (isUserExists) {
+    emit('trigger-toast', {
+      message: `This email is already in use!`,
+      type: 'error',
+    });
+    return;
+  }
+
+  emit('add-user', newUser);
+  emit('trigger-toast', {
+    message: `Account ${newUser.username} created successfully!`,
+    type: 'success',
+  });
 
   resetForm();
 });
