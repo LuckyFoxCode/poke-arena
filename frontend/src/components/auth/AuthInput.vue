@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAttrs } from 'vue';
 import type { AuthInputProps } from '@/types/auth';
 
 const props = defineProps<{
@@ -7,19 +8,24 @@ const props = defineProps<{
   modelValue?: string;
 }>();
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+}>();
+
+const attrs = useAttrs();
 </script>
 
 <template>
   <label class="relative transition-colors duration-300">
     <input
+      v-bind="attrs"
       :id="input.name"
       :name="input.name"
       :type="input.type"
-      :placeholder="input.placeholder"
       :value="modelValue"
+      :placeholder="input.placeholder"
       class="z-10 w-full rounded-lg border border-transparent bg-slate-100 p-3 pl-10 text-sm text-slate-900 transition-colors duration-300 ease-in-out outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white dark:bg-slate-800/70 dark:text-white dark:placeholder:text-slate-500 dark:focus:bg-slate-700/70"
-      @input="(e: Event) => emit('update:modelValue', (e.target as HTMLInputElement).value)"
+      @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
     <component
       :is="input.icon"

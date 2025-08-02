@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { reactive, type Component } from 'vue';
-import { ZodError } from 'zod';
-import AuthInput from './AuthInput.vue';
+import { computed, type Component } from 'vue';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
 import { IconEmail, IconPassword, IconUser } from '@/assets/icons';
-import { registerSchema, type RegisterForm } from '@/schemas/registerSchema';
+import { registerSchema } from '@/schemas/registerSchema';
+import AuthInput from './AuthInput.vue';
+import AuthButton from './AuthButton.vue';
 
 type InputName = 'username' | 'email' | 'password';
 
-type Input = {
+interface Input {
   name: InputName;
   type: 'text' | 'email' | 'password';
   placeholder: string;
   icon: Component;
-};
+}
 
 const inputs: Input[] = [
   {
@@ -35,48 +37,34 @@ const inputs: Input[] = [
   },
 ];
 
-const form = reactive<RegisterForm>({
-  username: '',
-  email: '',
-  password: '',
+const customInputs = computed(() =>
+  inputs.map((input) => {
+    const [model, attrs] = defineField(input.name);
+
+    return {
+      ...input,
+      model,
+      attrs,
+    };
+  }),
+);
+
+const { handleSubmit, errors, defineField, meta, resetForm } = useForm({
+  validationSchema: toTypedSchema(registerSchema),
 });
 
-const errors = reactive<Record<InputName, string>>({
-  username: '',
-  email: '',
-  password: '',
+const isFormReady = computed(() => {
+  const allFilled = customInputs.value.every((input) => Boolean(input.model.value));
+
+  return meta.value.valid && allFilled;
 });
 
-const validate = (): boolean => {
-  errors.username = '';
-  errors.email = '';
-  errors.password = '';
+const onSubmit = handleSubmit((values) => {
+  console.log(values);
+  console.log('Submit');
 
-  try {
-    registerSchema.parse(form);
-    return true;
-  } catch (e) {
-    if (e instanceof ZodError) {
-      for (const issue of e.issues) {
-        const field = issue.path[0];
-        if (typeof field === 'string' && field in errors) {
-          errors[field as InputName] = issue.message;
-        }
-      }
-    }
-    return false;
-  }
-};
-
-const onSubmit = () => {
-  if (validate()) {
-    console.log('Submitted:', form);
-
-    form.username = '';
-    form.email = '';
-    form.password = '';
-  }
-};
+  resetForm();
+});
 </script>
 
 <template>
@@ -87,18 +75,14 @@ const onSubmit = () => {
     <h2 class="mb-6 text-2xl">Create an account</h2>
     <div class="mb-6 flex flex-col gap-6">
       <AuthInput
-        v-for="input in inputs"
+        v-for="input in customInputs"
         :key="input.name"
-        v-model="form[input.name]"
+        v-model="input.model.value"
         :input="input"
         :error="errors[input.name]"
+        v-bind="input.attrs"
       />
     </div>
-    <button
-      type="submit"
-      class="cursor-pointer rounded-md bg-blue-500 py-2 text-white transition-colors duration-300 hover:bg-blue-600 focus:bg-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:bg-blue-400 dark:focus-visible:ring-blue-500"
-    >
-      Create an account
-    </button>
+    <AuthButton :is-form-ready="isFormReady"> Create an account </AuthButton>
   </form>
 </template>
