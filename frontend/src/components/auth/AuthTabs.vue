@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+defineProps<{ activeTab: 'signup' | 'signin' }>();
 
-const activeTab = ref(true);
+const emit = defineEmits(['set-tab']);
 </script>
 
 <template>
@@ -11,20 +11,22 @@ const activeTab = ref(true);
     <button
       class="w-fit cursor-pointer rounded-3xl px-4 py-2 text-sm transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:focus-visible:ring-blue-400"
       :class="
-        activeTab
+        activeTab === 'signup'
           ? 'bg-slate-300 text-slate-900 dark:bg-slate-950/80 dark:text-white'
           : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
       "
+      @click="() => emit('set-tab', 'signup')"
     >
       Sign up
     </button>
     <button
       class="w-fit cursor-pointer rounded-3xl px-4 py-2 text-sm transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:focus-visible:ring-blue-400"
       :class="
-        !activeTab
+        activeTab === 'signin'
           ? 'bg-slate-300 text-slate-900 dark:bg-slate-700 dark:text-white'
           : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
       "
+      @click="() => emit('set-tab', 'signin')"
     >
       Sign in
     </button>
