@@ -1,31 +1,30 @@
 <script setup lang="ts">
-import { registerSchema } from '@/schemas/registerSchema';
-import AuthInput from './AuthInput.vue';
+import { useAuthForm } from '@/composables/useAuthForm';
 import AuthButton from './AuthButton.vue';
 import AuthForm from './AuthForm.vue';
+import AuthInput from './AuthInput.vue';
 import { authInputs } from '@/constants/authInputs';
-import { useAuthForm } from '@/composables/useAuthForm';
+import { loginSchema } from '@/schemas/loginSchema';
 import type { EmitFn, EmitPayloadMap } from '@/types/emits';
 
 const emit = defineEmits({
-  'add-user': (_payload: EmitPayloadMap['add-user']) => true,
   'trigger-toast': (_payload: EmitPayloadMap['trigger-toast']) => true,
 }) as EmitFn;
 
-const fieldNames = ['username', 'email', 'password'] as const;
+const fieldNames = ['email', 'password'] as const;
 
 const { customInputs, isFormReady, onSubmit, errors } = useAuthForm(
-  registerSchema,
+  loginSchema,
   fieldNames,
   authInputs,
   emit,
-  'signup',
+  'signin',
 );
 </script>
 
 <template>
   <AuthForm
-    title="Create an account"
+    title="Welcome back!"
     :on-submit="onSubmit"
   >
     <template #inputs>
@@ -39,7 +38,7 @@ const { customInputs, isFormReady, onSubmit, errors } = useAuthForm(
       />
     </template>
     <template #button>
-      <AuthButton :is-form-ready="isFormReady"> Create an account </AuthButton>
+      <AuthButton :is-form-ready="isFormReady">Log In</AuthButton>
     </template>
   </AuthForm>
 </template>

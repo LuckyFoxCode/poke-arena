@@ -4,11 +4,15 @@ import { IconClose } from '@/assets/icons';
 import type { User } from '@/types/user';
 import AuthSignUp from './AuthSignUp.vue';
 import AuthTabs from './AuthTabs.vue';
+import AuthSignIn from './AuthSignIn.vue';
 
 const users = reactive<User[]>([]);
+const activeTab = ref<'signup' | 'signin'>('signup');
 const toastMessage = ref<string>(' User added successfully!');
 const toastType = ref<'success' | 'error'>('success');
 const showToast = ref<boolean>(false);
+
+const setTab = (newTab: 'signup' | 'signin') => (activeTab.value = newTab);
 
 const triggerToast = ({ type, message }: { type: 'success' | 'error'; message: string }) => {
   toastType.value = type;
@@ -44,9 +48,19 @@ const addUser = (user: User) => {
         <IconClose class="size-5" />
       </button>
 
-      <AuthTabs />
+      <AuthTabs
+        :active-tab="activeTab"
+        @set-tab="setTab"
+      />
+
       <AuthSignUp
+        v-if="activeTab === 'signup'"
         @add-user="addUser"
+        @trigger-toast="triggerToast"
+      />
+
+      <AuthSignIn
+        v-if="activeTab === 'signin'"
         @trigger-toast="triggerToast"
       />
 

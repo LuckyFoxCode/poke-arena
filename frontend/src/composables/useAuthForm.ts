@@ -5,15 +5,17 @@ import type { AuthInputConfig, InputName } from '@/constants/authInputs';
 import type { ZodType } from 'zod';
 import type { User } from '@/types/user';
 
-type EmitPayloadMap = {
+type EmitEvent = 'add-user' | 'trigger-toast';
+
+interface EmitPayloadMap {
   'add-user': User;
   'trigger-toast': {
     message: string;
     type: 'success' | 'error';
   };
-};
+}
 
-type EmitFn = <K extends keyof EmitPayloadMap>(event: K, payload?: EmitPayloadMap[K]) => void;
+type EmitFn = <K extends EmitEvent>(event: K, payload: EmitPayloadMap[K]) => void;
 
 export function useAuthForm(
   schema: ZodType<unknown>,
@@ -74,6 +76,31 @@ export function useAuthForm(
       emit('add-user', newUser);
       emit('trigger-toast', {
         message: `Account ${newUser.username} created successfully!`,
+        type: 'success',
+      });
+
+      resetForm();
+    } else if (mode === 'signin') {
+      const credentials = values as Pick<User, 'email' | 'password'>;
+
+      const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+
+      const user = users.find(
+        (user) =>
+          user.email.toLowerCase() === credentials.email.toLowerCase() &&
+          user.password === values.password,
+      );
+
+      if (!user) {
+        emit('trigger-toast', {
+          message: `Invalid email or password`,
+          type: 'error',
+        });
+        return;
+      }
+
+      emit('trigger-toast', {
+        message: `Welcome back, ${user.username}`,
         type: 'success',
       });
 
