@@ -25,10 +25,10 @@ const triggerToast = ({ type, message }: { type: 'success' | 'error'; message: s
 
 <template>
   <div
-    class="flex h-dvh w-full items-center justify-center bg-gradient-to-t from-blue-200 via-white to-slate-100 dark:from-blue-700 dark:via-black dark:to-black"
+    class="flex h-dvh w-full items-center justify-center bg-gradient-to-t from-blue-200 via-white to-slate-100 px-3 sm:px-0 dark:from-blue-700 dark:via-black dark:to-black"
   >
     <div
-      class="relative flex w-full max-w-[500px] flex-col gap-6 rounded-3xl bg-white/70 p-8 text-slate-900 shadow-2xl ring-1 ring-black/10 backdrop-blur-xl dark:bg-black/40 dark:text-white dark:ring-white/10"
+      class="relative flex w-full max-w-[500px] flex-col gap-6 rounded-3xl bg-white/70 p-3 text-slate-900 shadow-2xl ring-1 ring-black/10 backdrop-blur-xl sm:p-8 dark:bg-black/40 dark:text-white dark:ring-white/10"
     >
       <button
         type="button"
