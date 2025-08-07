@@ -8,7 +8,7 @@ import { useAuthForm } from '@/composables/useAuthForm';
 import type { EmitFn, EmitPayloadMap } from '@/types/emits';
 
 const emit = defineEmits({
-  'add-user': (_payload: EmitPayloadMap['add-user']) => true,
+  'set-tab': (_payload: EmitPayloadMap['set-tab']) => true,
   'trigger-toast': (_payload: EmitPayloadMap['trigger-toast']) => true,
 }) as EmitFn;
 

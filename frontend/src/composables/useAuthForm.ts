@@ -4,15 +4,16 @@ import { computed } from 'vue';
 import type { AuthInputConfig, InputName } from '@/constants/authInputs';
 import type { ZodType } from 'zod';
 import type { User } from '@/types/user';
+import { useAuthStore } from '@/stores/useAuthStore';
 
-type EmitEvent = 'add-user' | 'trigger-toast';
+type EmitEvent = 'trigger-toast' | 'set-tab';
 
 interface EmitPayloadMap {
-  'add-user': User;
   'trigger-toast': {
     message: string;
     type: 'success' | 'error';
   };
+  'set-tab': 'signin';
 }
 
 type EmitFn = <K extends EmitEvent>(event: K, payload: EmitPayloadMap[K]) => void;
@@ -27,6 +28,8 @@ export function useAuthForm(
   const { handleSubmit, errors, defineField, meta, resetForm } = useForm({
     validationSchema: toTypedSchema(schema),
   });
+
+  const authStore = useAuthStore();
 
   const customInputs = computed(() =>
     fieldNames.map((name) => {
@@ -51,21 +54,13 @@ export function useAuthForm(
     if (mode === 'signup') {
       const credentials = values as Pick<User, 'username' | 'email' | 'password'>;
 
-      const newUser: User = {
-        ...credentials,
-        id: crypto.randomUUID(),
-        createAt: new Date().toISOString(),
-        role: 'user',
-        authProvider: 'local',
-      };
+      const success = authStore.register({
+        username: credentials.username,
+        email: credentials.email,
+        password: credentials.password,
+      });
 
-      const existingUsers: User[] = JSON.parse(localStorage.getItem('users') || '[]');
-
-      const isUserExists = existingUsers.some(
-        (user) => user.email.toLowerCase() === newUser.email.toLowerCase(),
-      );
-
-      if (isUserExists) {
+      if (!success) {
         emit('trigger-toast', {
           message: `This email is already in use!`,
           type: 'error',
@@ -73,19 +68,17 @@ export function useAuthForm(
         return;
       }
 
-      emit('add-user', newUser);
       emit('trigger-toast', {
-        message: `Account ${newUser.username} created successfully!`,
+        message: `Account ${values.username} created successfully!`,
         type: 'success',
       });
+      emit('set-tab', 'signin');
 
       resetForm();
     } else if (mode === 'signin') {
       const credentials = values as Pick<User, 'email' | 'password'>;
 
-      const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
-
-      const user = users.find(
+      const user = authStore.users.find(
         (user) =>
           user.email.toLowerCase() === credentials.email.toLowerCase() &&
           user.password === values.password,
@@ -98,6 +91,8 @@ export function useAuthForm(
         });
         return;
       }
+
+      authStore.setCurrentUser(user);
 
       emit('trigger-toast', {
         message: `Welcome back, ${user.username}`,

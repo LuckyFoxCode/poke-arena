@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { ref } from 'vue';
 import { IconClose } from '@/assets/icons';
-import type { User } from '@/types/user';
 import AuthSignUp from './AuthSignUp.vue';
 import AuthTabs from './AuthTabs.vue';
 import AuthSignIn from './AuthSignIn.vue';
 
-const users = reactive<User[]>([]);
 const activeTab = ref<'signup' | 'signin'>('signup');
 const toastMessage = ref<string>(' User added successfully!');
 const toastType = ref<'success' | 'error'>('success');
@@ -22,15 +20,6 @@ const triggerToast = ({ type, message }: { type: 'success' | 'error'; message: s
   setTimeout(() => {
     showToast.value = false;
   }, 3000);
-};
-
-onMounted(() => {
-  users.push(...JSON.parse(localStorage.getItem('users') || '[]'));
-});
-
-const addUser = (user: User) => {
-  users.push(user);
-  localStorage.setItem('users', JSON.stringify(users));
 };
 </script>
 
@@ -55,8 +44,8 @@ const addUser = (user: User) => {
 
       <AuthSignUp
         v-if="activeTab === 'signup'"
-        @add-user="addUser"
         @trigger-toast="triggerToast"
+        @set-tab="setTab"
       />
 
       <AuthSignIn
