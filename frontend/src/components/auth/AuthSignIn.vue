@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useAuthForm } from '@/composables/useAuthForm';
 import AuthButton from './AuthButton.vue';
 import AuthForm from './AuthForm.vue';
 import AuthInput from './AuthInput.vue';
-import { authInputs } from '@/constants/authInputs';
-import { loginSchema } from '@/schemas/loginSchema';
-import type { EmitFn, EmitPayloadMap } from '@/types/emits';
+import { useAuthForm } from '@/composables';
+import { authInputs } from '@/constants';
+import { loginSchema } from '@/schemas';
+import type { EmitFn, EmitPayloadMap } from '@/types';
 
 const emit = defineEmits({
   'trigger-toast': (_payload: EmitPayloadMap['trigger-toast']) => true,

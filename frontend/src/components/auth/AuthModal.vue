@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { ref } from 'vue';
 import { IconClose } from '@/assets/icons';
-import type { User } from '@/types/user';
 import AuthSignUp from './AuthSignUp.vue';
 import AuthTabs from './AuthTabs.vue';
 import AuthSignIn from './AuthSignIn.vue';
 
-const users = reactive<User[]>([]);
 const activeTab = ref<'signup' | 'signin'>('signup');
 const toastMessage = ref<string>(' User added successfully!');
 const toastType = ref<'success' | 'error'>('success');
@@ -23,23 +21,14 @@ const triggerToast = ({ type, message }: { type: 'success' | 'error'; message: s
     showToast.value = false;
   }, 3000);
 };
-
-onMounted(() => {
-  users.push(...JSON.parse(localStorage.getItem('users') || '[]'));
-});
-
-const addUser = (user: User) => {
-  users.push(user);
-  localStorage.setItem('users', JSON.stringify(users));
-};
 </script>
 
 <template>
   <div
-    class="flex h-dvh w-full items-center justify-center bg-gradient-to-t from-blue-200 via-white to-slate-100 dark:from-blue-700 dark:via-black dark:to-black"
+    class="flex h-dvh w-full items-center justify-center bg-gradient-to-t from-blue-200 via-white to-slate-100 px-3 sm:px-0 dark:from-blue-700 dark:via-black dark:to-black"
   >
     <div
-      class="relative flex w-full max-w-[500px] flex-col gap-6 rounded-3xl bg-white/70 p-8 text-slate-900 shadow-2xl ring-1 ring-black/10 backdrop-blur-xl dark:bg-black/40 dark:text-white dark:ring-white/10"
+      class="relative flex w-full max-w-[500px] flex-col gap-6 rounded-3xl bg-white/70 p-3 text-slate-900 shadow-2xl ring-1 ring-black/10 backdrop-blur-xl sm:p-8 dark:bg-black/40 dark:text-white dark:ring-white/10"
     >
       <button
         type="button"
@@ -55,8 +44,8 @@ const addUser = (user: User) => {
 
       <AuthSignUp
         v-if="activeTab === 'signup'"
-        @add-user="addUser"
         @trigger-toast="triggerToast"
+        @set-tab="setTab"
       />
 
       <AuthSignIn

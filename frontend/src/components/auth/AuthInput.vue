@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAttrs } from 'vue';
-import type { AuthInputProps } from '@/types/auth';
+import type { AuthInputProps } from '@/types';
 
 const props = defineProps<{
   input: AuthInputProps;
