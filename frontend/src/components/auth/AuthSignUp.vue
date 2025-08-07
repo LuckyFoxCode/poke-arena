@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { registerSchema } from '@/schemas/registerSchema';
 import AuthInput from './AuthInput.vue';
 import AuthButton from './AuthButton.vue';
 import AuthForm from './AuthForm.vue';
-import { authInputs } from '@/constants/authInputs';
-import { useAuthForm } from '@/composables/useAuthForm';
-import type { EmitFn, EmitPayloadMap } from '@/types/emits';
+import { useAuthForm } from '@/composables';
+import { authInputs } from '@/constants';
+import { registerSchema } from '@/schemas';
+import type { EmitFn, EmitPayloadMap } from '@/types';
 
 const emit = defineEmits({
   'set-tab': (_payload: EmitPayloadMap['set-tab']) => true,

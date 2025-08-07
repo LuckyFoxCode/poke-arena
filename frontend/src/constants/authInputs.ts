@@ -1,16 +1,7 @@
 import { IconEmail, IconPassword, IconUser } from '@/assets/icons';
-import type { Component } from 'vue';
+import type { AuthInputProps, InputName } from '@/types';
 
-export type InputName = 'username' | 'email' | 'password';
-
-export interface AuthInputConfig {
-  name: InputName;
-  type: 'text' | 'email' | 'password';
-  placeholder: string;
-  icon: Component;
-}
-
-export const authInputs: Record<InputName, AuthInputConfig> = {
+export const authInputs: Record<InputName, AuthInputProps> = {
   username: {
     name: 'username',
     type: 'text',

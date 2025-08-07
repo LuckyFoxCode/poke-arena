@@ -1,27 +1,14 @@
-import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
 import { computed } from 'vue';
-import type { AuthInputConfig, InputName } from '@/constants/authInputs';
+import { useForm } from 'vee-validate';
 import type { ZodType } from 'zod';
-import type { User } from '@/types/user';
-import { useAuthStore } from '@/stores/useAuthStore';
-
-type EmitEvent = 'trigger-toast' | 'set-tab';
-
-interface EmitPayloadMap {
-  'trigger-toast': {
-    message: string;
-    type: 'success' | 'error';
-  };
-  'set-tab': 'signin';
-}
-
-type EmitFn = <K extends EmitEvent>(event: K, payload: EmitPayloadMap[K]) => void;
+import { toTypedSchema } from '@vee-validate/zod';
+import { useAuthStore } from '@/stores';
+import type { AuthInputProps, EmitFn, InputName, User } from '@/types';
 
 export function useAuthForm(
   schema: ZodType<unknown>,
   fieldNames: readonly InputName[],
-  inputConfig: Record<InputName, AuthInputConfig>,
+  inputConfig: Record<InputName, AuthInputProps>,
   emit: EmitFn,
   mode: 'signup' | 'signin',
 ) {
